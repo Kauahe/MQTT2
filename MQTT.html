@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
+    <link href="https://fonts.googleapis.com/css2?family=Freehand&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+    <title>Fale Conosco - MQTT</title>
+    <style>
+        body
+        {
+            width: 100%;
+            height: 100vh;
+            background-color: #fef391;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            justify-items: center;
+            align-content: center;
+            align-items: center;
+            font-family: "Audiowide", sans-serif;
+        }
+
+        .principal
+        {
+            width:80%;
+            height: 90vh;
+             display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            justify-items: center;
+            align-content: center;
+            align-items: center;
+           
+        }
+
+        .segunda
+        {
+            width: 100%;
+            height: 30vh;
+            background-color: rgba(0, 0, 255, 0.295);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            justify-items: center;
+            align-content: center;
+            align-items: center;
+            font-size: 40px;
+            font-family: 'Pinyon Script', cursive;
+        }
+
+        .caixa
+        {
+            width: 100%;
+            height: 50vh;
+            background-color: rgba(95, 158, 160, 0.459);
+            font-size: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            justify-items: center;
+            align-content: center;
+            align-items: center;
+        }
+
+        .msg
+        {
+            width: 200px;
+            height: 20px;
+            
+        }
+
+        .botao
+        {
+            width: 60px;
+            height: 25px;
+            cursor: pointer;
+            background-color: #EF5867;
+            
+        }
+
+        
+        
+
+    </style>
+</head>
+<body>
+   <div class="principal">
+
+     <div class="segunda"> <img src="logo.png" width="160px" class="logo"> 
+     <b>central do cliente </b> 
+     </div>
+
+      <div class="caixa"> 
+
+      </b> FALE CONOSCO: </b>  <input class="msg" type="text" id="mensagem"> <br> <button class="botao" onclick="Enviar();">Enviar</button>
+        <div id="resposta">  </div> 
+      </div>
+  
+    </div>
+    
+       
+</body>
+
+<script>
+
+  topico = "backery/suporte";  // Variável que ficará no servidor MQTT
+
+  // Conexão:
+  client = new Paho.MQTT.Client("broker.hivemq.com", Number(8000), "");
+
+  // Funções executadas quando a conexão é perdida e quando uma mensagem chega:
+  client.onConnectionLost = ConexaoPerdida;
+  client.onMessageArrived = MensagemRecebida;
+
+  // Função chamada quando a conexão for realizada:
+  client.connect({onSuccess:Conectar});
+
+  // A função Conectar deve criar a variável (tópico) no computador remoto:
+  function Conectar() {
+    
+    client.subscribe(topico);  // Tópico (variável) criado no servidor MQTT
+    
+  }
+  
+  function ConexaoPerdida(responseObject) {
+    if (responseObject.errorCode !== 0) {
+      resposta.innerHTML += "Desconectado";
+    }
+  }
+
+  // Função executada quando a variável (tópico) no servidor receber uma mensagem:
+  function MensagemRecebida(message)
+   {
+    texto= message.payloadString; 
+    expressao1=/https:\/\/github.com\/Kauahe\/site\/blob\/master\/area_pix.html/g;
+    teste1=expressao1.test(texto)
+   
+    if (teste1==true)
+    {
+        texto2 = texto
+        texto2 = texto2.replace("https:\/\/github.com\/Kauahe\/site\/blob\/master\/area_pix.html","")
+        expressao2=/http/g;
+        teste2=expressao2.test(texto2)
+        if (teste2==false)
+        {
+            resposta.innerHTML += "<br><br>" + texto
+        }
+        else{
+            resposta.innerHTML += "<br><br>Código malicioso"
+        }
+    }
+  
+  }
+
+  function Enviar()
+  {
+    texto = mensagem.value;
+    texto="<a href='https://github.com/Kauahe/site/blob/master/area_pix.html'> SUPORTE: </a <br> <br>" +texto
+    message = new Paho.MQTT.Message(texto);
+    message.destinationName = topico;
+    client.send(message);
+    mensagem.value=""
+  }
+
+</script>
+
+</html>
