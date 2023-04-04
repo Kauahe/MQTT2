@@ -31,20 +31,20 @@
 
    <div class="principal">
 
-     <div class="segunda"> <img src="logo.png" width="160px" class="logo"> 
+     <div class="segunda"> <img src="logo.png" width="130px" class="logo"> 
      <b>central do cliente </b> 
      </div>
 
       <div class="caixa"> 
         
        </b> FALE CONOSCO: </b> 
-       
-       <input class="msg" type="text" id="mensagem" class="recado">
+       <div onclick="ExecutaAnimacao();" class="texto_animado" id="texto_animado">Digite aqui</div>
+       <input class="msg" type="text" onfocus="ExecutaAnimacao();" id="mensagem" class="recado">
        
        <br> 
        <button class="botao" onclick="Enviar();">ENVIAR</button>
        
-        <div id="resposta">  </div> 
+        <div class="resposta" id="resposta">  </div> 
       </div>
   
     </div>
@@ -94,7 +94,7 @@
         teste2=expressao2.test(texto2)
         if (teste2==false)
         {
-            resposta.innerHTML += "<br><br>" + texto
+            resposta.innerHTML +=  texto + "<br><br>"
         }
         else{
             resposta.innerHTML += "<br><br> Questionamento indivíduo"
@@ -106,11 +106,20 @@
   function Enviar()
   {
     texto = mensagem.value;
-    texto="<a href='https://github.com/Kauahe/site/blob/master/area_pix.html'> SUPORTE: </a <br> <br>" +texto
-    message = new Paho.MQTT.Message(texto);
-    message.destinationName = topico;
-    client.send(message);
-    mensagem.value=""
+    if(texto!="")
+    {
+      texto="<a href='https://github.com/Kauahe/site/blob/master/area_pix.html'> SUPORTE: </a <br> <br>" +texto
+      message = new Paho.MQTT.Message(texto);
+      message.destinationName = topico;
+      client.send(message);
+      mensagem.value=""
+      texto_animado.classList.remove("animar");
+    }
+  }
+
+  function ExecutaAnimacao()
+  {
+    texto_animado.classList.add("animar");
   }
 
 </script>
